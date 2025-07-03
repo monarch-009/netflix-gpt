@@ -1,10 +1,90 @@
+import { checkValidData, checkValidSignUpData } from "../utils/vakidate";
 import Header from "./Header";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
+
 
 const Login = () => {
 
   // Function to toggle the sign-in form
   const [IsSignInForm, setIsSignInForm] = useState(true);
+
+  // State to hold error messages
+  // This will be used to display validation errors
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Refs to access input values directly
+  // This allows us to avoid using state for every input field
+  const name = useRef(null);
+  const email = useRef(null);
+  const password = useRef(null);
+
+  const handleButtonClick = () => {
+    if (IsSignInForm) {
+      const message = checkValidData(email.current.value, password.current.value);
+      setErrorMessage(message);
+
+      if (message === null) {
+        signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log("User signed in successfully:", user);
+            navigate('/browse');
+
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setErrorMessage(errorMessage + " " + errorCode);
+          });
+
+      }
+
+    } else {
+      const message = checkValidSignUpData(name.current.value, email.current.value, password.current.value);
+      setErrorMessage(message);
+
+      if (message === null) {
+        // Create a new user object
+        createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+          .then((userCredential) => {
+            // Signed up 
+            const user = userCredential.user;
+            updateProfile(user, {
+              displayName: name.current.value, photoURL: "https://example.com/jane-q-user/profile.jpg",
+            }).then(() => {
+              const { uid, email, displayName, photoURL } = auth.currentUser;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              )
+              navigate('/browse');
+            }).catch((error) => {
+              // An error occurred
+              setErrorMessage("Profile update failed: " + error.message);
+            });
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setErrorMessage(errorMessage + " " + errorCode);
+          });
+      }
+    }
+
+
+  }
 
   const toggleSignInForm = () => {
     setIsSignInForm(!IsSignInForm);
@@ -27,12 +107,13 @@ const Login = () => {
 
       {/* Login Form */}
       <div className="flex justify-center items-center min-h-screen">
-        <form className="bg-black bg-opacity-75 px-10 py-12 rounded-md text-white w-full max-w-md space-y-5">
+        <form onSubmit={(e) => { e.preventDefault(); }} className="bg-black bg-opacity-75 px-10 py-12 rounded-md text-white w-full max-w-md space-y-5">
           <h1 className="text-3xl font-bold">{IsSignInForm ? "Sign In" : "Sign Up"}</h1>
 
           {/* Sign Up Form Name also */}
           {!IsSignInForm && (
             <input
+              ref={name}
               type="text"
               placeholder="Full name"
               className="w-full bg-[#333] text-white p-3 rounded border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600"
@@ -41,6 +122,7 @@ const Login = () => {
 
           {/* Email */}
           <input
+            ref={email}
             type="email"
             placeholder="Email or mobile number"
             className="w-full bg-[#333] text-white p-3 rounded border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600"
@@ -48,15 +130,20 @@ const Login = () => {
 
           {/* Password */}
           <input
+            ref={password}
             type="password"
             placeholder="Password"
             className="w-full bg-[#333] text-white p-3 rounded border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600"
           />
 
+          {/* Error Message */}
+          <p className="text-red-500">{errorMessage}</p>
+
           {/* Sign In Button */}
           <button
             type="submit"
             className="w-full bg-red-600 hover:bg-red-700 transition duration-300 font-semibold py-3 rounded"
+            onClick={handleButtonClick}
           >
             {IsSignInForm ? "Sign In" : "Sign Up"}
           </button>
