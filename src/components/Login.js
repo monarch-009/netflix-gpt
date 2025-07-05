@@ -3,13 +3,12 @@ import Header from "./Header";
 import React, { useState, useRef } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { BACKGROUND_IMAGE } from "../utils/constant";
 
 
 const Login = () => {
-
   // Function to toggle the sign-in form
   const [IsSignInForm, setIsSignInForm] = useState(true);
 
@@ -17,7 +16,6 @@ const Login = () => {
   // This will be used to display validation errors
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // Refs to access input values directly
@@ -31,13 +29,10 @@ const Login = () => {
       const message = checkValidData(email.current.value, password.current.value);
       setErrorMessage(message);
 
+      // Sign in the user if validation passes
       if (message === null) {
         signInWithEmailAndPassword(auth, email.current.value, password.current.value)
           .then((userCredential) => {
-            const user = userCredential.user;
-            console.log("User signed in successfully:", user);
-            navigate('/browse');
-
           })
           .catch((error) => {
             const errorCode = error.code;
@@ -51,8 +46,8 @@ const Login = () => {
       const message = checkValidSignUpData(name.current.value, email.current.value, password.current.value);
       setErrorMessage(message);
 
+      // Create a new user object
       if (message === null) {
-        // Create a new user object
         createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
           .then((userCredential) => {
             // Signed up 
@@ -69,7 +64,6 @@ const Login = () => {
                   photoURL: photoURL,
                 })
               )
-              navigate('/browse');
             }).catch((error) => {
               // An error occurred
               setErrorMessage("Profile update failed: " + error.message);
@@ -89,6 +83,7 @@ const Login = () => {
   const toggleSignInForm = () => {
     setIsSignInForm(!IsSignInForm);
   }
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
 
@@ -98,8 +93,7 @@ const Login = () => {
       <div
         className="absolute inset-0 bg-cover bg-center scale-125"
         style={{
-          backgroundImage:
-            "url('https://assets.nflxext.com/ffe/siteui/vlv3/75b0ed49-75ab-4a63-bd45-37bc2c95cb73/web/IN-en-20250623-TRIFECTA-perspective_ae5833b7-6ce5-4e88-853e-014f38c506f1_large.jpg')",
+          backgroundImage: `url('${BACKGROUND_IMAGE}')`,
           filter: "brightness(0.4)",
           zIndex: "-1",
         }}
