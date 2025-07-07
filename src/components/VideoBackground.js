@@ -7,8 +7,8 @@ const VideoBackground = ({ movieId }) => {
 
     return (
         //Tailwind CSS classes for responsive iframe
-        <div className="relative w-screen h-screen overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+        <div className="relative w-screen h-screen overflow-hidden ">
+            <div className="top-0 left-0 w-full h-full -z-10 overflow-hidden">
                 <div className="absolute top-[-25%] left-[-25%] w-[150%] h-[150%]">
                     <iframe
                         className="w-full h-full scale-100"
@@ -19,7 +19,7 @@ const VideoBackground = ({ movieId }) => {
                         allowFullScreen
                     >
                     </iframe>
-                </div>
+                </div> 
             </div>
 
         </div>

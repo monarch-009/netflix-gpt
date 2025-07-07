@@ -6,9 +6,11 @@ const SecondaryContainer = () => {
   const movies = useSelector((store) => store.movies)
 
   return (
-    <div className='bg-black '>
-      <div className='-mt-44 px-6  z-20'>
+    <div className="bg-black">
+      <div className='-mt-44 px-6 z-20 relative'>
         <MovieList title="Now Playing" movies={movies.nowPlayingMovies} />
+      </div>
+      <div className="bg-black px-6 relative z-20">
         <MovieList title="Top Rated" movies={movies.topRatedMovies} />
         <MovieList title="Popular" movies={movies.popularMovies} />
         <MovieList title="Upcoming" movies={movies.upcomingMovies} />
@@ -18,4 +20,4 @@ const SecondaryContainer = () => {
   )
 }
 
-export default SecondaryContainer
+export default SecondaryContainer;

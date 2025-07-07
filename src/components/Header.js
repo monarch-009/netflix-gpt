@@ -47,7 +47,8 @@ const Header = () => {
       <img className='w-44' src={LOGO} alt="Netflix Logo" />
 
       {user && (<div className='flex items-center gap-4'>
-        <img src={PROFILE} alt='Profile' className='w-10 h-10  cursor-pointer' />
+        <button className='bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition duration-300'>GPT Search</button>
+        <img src={PROFILE} alt='Profile' className='w-10 h-10  rounded cursor-pointer' />
         <button onClick={handleSignOut} className='bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300'>Sign Out</button>
       </div>)}
 
