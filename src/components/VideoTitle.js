@@ -3,7 +3,7 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const VideoTitle = ({ title, overview }) => {
   return (
-    <div className="absolute bottom-20 md:bottom-24 lg:bottom-32 left-4 md:left-10 text-white max-w-xs sm:max-w-md md:max-w-xl z-20">
+    <div className="absolute bottom-20 md:bottom-48 lg:bottom-48 left-4 md:left-10 text-white max-w-xs sm:max-w-md md:max-w-xl z-20">
       <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-3 sm:mb-4 drop-shadow-lg">
         {title}
       </h1>
